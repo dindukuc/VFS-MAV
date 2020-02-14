@@ -16,7 +16,7 @@ int throttle_step = 0;
 int dataA = 180;
 int dataB = 180;
 int rot = 0;
-int yaw_scale = 128;
+int yaw_scale = 64; //128;
 
 //servo stuff
 Servo servoL;
@@ -32,7 +32,7 @@ void setup()
   pinMode(pins[1], INPUT); // PWM input pin
   pinMode(pins[2], INPUT); // PWM input pin
   pinMode(pins[3], INPUT); // PWM input pin
-  pinMode(pins[4], INPUT); // PWM input pin
+//  pinMode(pins[4], INPUT); // PWM input pin
   //pinMode(outblink, OUTPUT); // LED Blink pin, using the build in LED on pin 13
   
   
@@ -75,7 +75,7 @@ void loop()
 
 
   
-  for(int i; i < 20; i++){
+  for(int i = 0; i < 20; i++){
     delay(100);
     analogWrite(escA, throttle);
     analogWrite(escB, throttle);
@@ -83,7 +83,7 @@ void loop()
     Serial.println(throttle);
   }
   
-  for(int i; i < 20; i++){
+  for(int i = 0; i < 20; i++){
     delay(50);
     analogWrite(escA, throttle);
     analogWrite(escB, throttle);
@@ -122,11 +122,12 @@ void loop()
     dataA -= rot; 
     dataB += rot;
 
+    dataA += 8; //change it so it is linearly scaling
     
-    if(dataA > 230){
-      dataA = 230;
+    if(dataA > 238){
+      dataA = 238;
     }
-    else if(dataA < 170){
+    else if(dataA < 179){
       dataA = 170;
     }
 
@@ -151,45 +152,43 @@ void loop()
     //servo control
     turn = (channel_data[1] - 512)/turn_scale;
   
-    servoValL = channel_data[2];
-    servoValR = channel_data[2];
+    servoValL = channel_data[2]; //forward and back channel
+    servoValR = channel_data[2]; //forward and back channel
 
-    Serial.println((String)"Channel Data: " + channel_data[1]);
+    Serial.println((String)"Channel Data: " + channel_data[1]); //prints the turn data
 
-    servoValL = (servoValL*180)/1024;
-    servoValR = 180 - ( (servoValR*180)/1024 );
+    //this returns it in terms of an angle from 0 to 180
+    servoValL = 180 - ( (servoValL*180)/1024 ); //used to be:  servoValL = (servoValL*180)/1024; changed to make left and right turn correctly
+    servoValR = (servoValR*180)/1024; //used to be:  servoValR = 180 - (servoValR*180)/1024; changed to make left and right turn correctly
 
     servoValL += turn;
     servoValR += turn;
 
-    if(servoValL < 60){ //max for backward
-      servoValL = 60;
-    }
-    else if(servoValL > 120){ //max for forward
-      servoValL = 120;
-    }
+    //limits without map function
+//    if(servoValL < 60){ //max for backward
+//      servoValL = 60;
+//    }
+//    else if(servoValL > 120){ //max for forward
+//      servoValL = 120;
+//    }
+//
+//    
+//    if(servoValR < 60){ //max for forward
+//      servoValR = 60;
+//    }
+//    else if(servoValR > 120){ //max for backward
+//      servoValR = 120;
+//    }
 
+    //newly added map functions
+    servoValL = map(servoValL, 0, 180, 60, 120); 
+    servoValR = map(servoValL, 0, 180, 60, 120);
     
-    if(servoValR < 60){ //max for forward
-      servoValR = 60;
-    }
-    else if(servoValR > 120){ //max for backward
-      servoValR = 120;
-    }
-
     Serial.println((String)"Servo Data L: " + servoValL);
     Serial.println((String)"Servo Data R: " + servoValR);
 
     servoL.write(servoValL);
     servoR.write(servoValR);
-    
-    
-    
-    
-    
-    
-    
-    
     
     
     delay(50);
@@ -215,6 +214,9 @@ void loop()
 //      analogWrite(escA, throttle);
 //      analogWrite(escB, throttle);
 //    }
+  
+  
+  
   }
   
 
@@ -231,14 +233,14 @@ void loop()
 
 void bootThrottle(){
   Serial.println("Throttle Cal");
-  for(int i; i < 150; i++){
+  for(int i = 0; i < 150; i++){
     analogWrite(escA, throttle_step);
     analogWrite(escB, throttle_step);
     throttle_step++;
     delay(10);
   }
   delay(100);
-  for(int i; i < 150; i++){
+  for(int i = 0; i < 150; i++){
     analogWrite(escA, throttle_step);
     analogWrite(escB, throttle_step);
     throttle_step--;
