@@ -73,6 +73,8 @@ void loop()
   int turn;
   int turn_scale = 16;
 
+  int offset = 0;
+
 
   
   for(int i = 0; i < 20; i++){
@@ -122,12 +124,14 @@ void loop()
     dataA -= rot; 
     dataB += rot;
 
-    dataA += 8; //change it so it is linearly scaling
+    //dataA += 8; //change it so it is linearly scaling
+    offset = map(dataA, 170, 255, 6, 10); //should be sort of linearly scaling
+    dataA += offset;
     
     if(dataA > 238){
       dataA = 238;
     }
-    else if(dataA < 179){
+    else if(dataA < (170 + offset + 1)){ //used to be "dataA < 179" for offset being 8
       dataA = 170;
     }
 
