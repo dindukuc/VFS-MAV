@@ -4,10 +4,11 @@
 // with a servo, such as controlling LED lighting.
 
 #include <Servo.h>
+#include <PID_v1.h>
 
 #define CHANNELS 4
 
-int num_channels = 4;
+int num_channels = CHANNELS;
 int pins[CHANNELS] = {0, 1, 14, 15};  // Check what pin to use
 byte escA = 2; // change this
 byte escB = 3; //change this
@@ -22,10 +23,20 @@ int yaw_scale = 64; //128;
 Servo servoL;
 Servo servoR;
 
+//PID stuff
+double SetpointA, InputA, OutputA;
+double SetpointB, InputB, OutputB;
+double kp=1, ki=0.05, kd=0.25; //tuning values to change here
+
+PID PIDA(&InputA, &OutputA, &SetpointA, kp, ki, kd, DIRECT); //left pid loop
+PID PIDB(&InputB, &OutputB, &SetpointB, kp, ki, kd, DIRECT); //right pid loop
+
+
+
+
 
 // setup serial and input, output pins
-void setup()
-{
+void setup(){
  
   Serial.begin(9600);
   pinMode(pins[0], INPUT); // PWM input pin
@@ -55,8 +66,19 @@ void setup()
   Serial.println("end");
   delay(1000);
 
+
+  InputA = 0;
+  InputB = 0;
+
+  SetpointA = 0;
+  SetpointB = 0;
+
+
+  PIDA.SetSampleTime(40);
+  PIDB.SetSampleTime(40);
   
-  
+  PIDA.SetMode(AUTOMATIC);
+  PIDB.SetMode(AUTOMATIC);
 }
 
  
@@ -72,8 +94,6 @@ void loop()
   int servoValR;
   int turn;
   int turn_scale = 16;
-
-  int offset = 0;
 
 
   
@@ -125,13 +145,13 @@ void loop()
     dataB += rot;
 
     //dataA += 8; //constant offset scaling
-    offset = map(dataA, 170, 255, 6, 10); //should be sort of linearly scaling
-    dataA += offset;
+//    offset = map(dataA, 170, 255, 6, 10); //should be sort of linearly scaling
+//    dataA += offset;
     
     if(dataA > 238){
       dataA = 238;
     }
-    else if(dataA < (170 + offset + 1)){ //used to be "dataA < 179" for offset being 8
+    else if(dataA < (170)){ //used to be "dataA < 179" for offset being 8
       dataA = 170;
     }
 
@@ -144,14 +164,20 @@ void loop()
     }
 
 
+//    setpointA = translate(dataA);
+//    setpointB = translate(dataB);
+
+ 
+    
     Serial.println((String)"Throttle DataA: " + dataA);
     Serial.println((String)"Throttle DataB: " + dataB);
 
-    //data = 170;
     analogWrite(escA,dataA);
     analogWrite(escB,dataB);
 
     
+
+
     
     //servo control
     turn = (channel_data[1] - 512)/turn_scale;
@@ -196,40 +222,8 @@ void loop()
     
     
     delay(50);
-
-
-
-    
-//    if(data < 170){
-//      analogWrite(escA,170);
-//      analogWrite(escB,170);
-////      break;
-//    }
-//  
-//    if(data > throttle){
-//      delay(50);
-//      throttle++;
-//      analogWrite(escA, throttle);
-//      analogWrite(escB, throttle);
-//    }
-//    if(data < throttle){
-//      delay(50);
-//      throttle--;
-//      analogWrite(escA, throttle);
-//      analogWrite(escB, throttle);
-//    }
-  
-  
-  
   }
-  
 
-//    Serial.println();
-
-  
-  
-  
- 
   delay(100); //delay so you can read the scrolling output
 }
 
