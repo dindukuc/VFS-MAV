@@ -136,8 +136,8 @@ void loop()
     }
 
     
-    if(dataB > 230){
-      dataB = 230;
+    if(dataB > 255){
+      dataB = 255;
     }
     else if(dataB < 170){
       dataB = 170;

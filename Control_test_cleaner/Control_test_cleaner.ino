@@ -5,10 +5,11 @@
 
 #include <Servo.h>
 
-#define CHANNELS 4
+#define CHANNELS 5
 
-int num_channels = 4;
-int pins[CHANNELS] = {0, 1, 14, 15};  // Check what pin to use
+
+int num_channels = 5;
+int pins[CHANNELS] = {0, 1, 14, 15, 12};  // Check what pin to use
 byte escA = 2; // change this
 byte escB = 3; //change this
 int throttle = 55;
@@ -24,15 +25,18 @@ Servo servoR;
 
 
 // setup serial and input, output pins
-void setup()
-{
+void setup(){
+  int temp = 0;
+  int duration = 0;
+  int channel = 0;
+
  
   Serial.begin(9600);
   pinMode(pins[0], INPUT); // PWM input pin
   pinMode(pins[1], INPUT); // PWM input pin
   pinMode(pins[2], INPUT); // PWM input pin
   pinMode(pins[3], INPUT); // PWM input pin
-//  pinMode(pins[4], INPUT); // PWM input pin
+  //pinMode(pins[4], INPUT); // PWM input pin
   //pinMode(outblink, OUTPUT); // LED Blink pin, using the build in LED on pin 13
   
   
@@ -46,8 +50,31 @@ void setup()
   pinMode(escB, OUTPUT);
   analogWriteFrequency(escA, 16000);     //set pin 0 frequency to 16kHz
   analogWriteFrequency(escB, 16000);     //set pin 1 frequency to 16kHz
+  
+  
+  while(channel != 1024){
+      
+      analogWrite(escA,170);
+      analogWrite(escB,170);
+      
+      duration = pulseIn(pins[4], HIGH);
+      temp = duration - 990;
+      
+      if(temp < 0){
+         temp = 0;
+      }
+      else if(temp > 1024){
+        temp = 1024;
+      }
+      
+      channel = temp;
 
+      
+    }
+  
+  
   delay(1000);
+  
   analogWrite(escA, 255);
   analogWrite(escB, 255);
   delay(3000);
@@ -115,18 +142,55 @@ void loop()
     }
 //    Serial.println();
 
+    while(channel_data[4] != 1024){
+      
+      analogWrite(escA,170);
+      analogWrite(escB,170);
+      
+      duration = pulseIn(pins[4], HIGH);
+      temp = duration - 990;
+      
+      if(temp < 0){
+         temp = 0;
+      }
+      else if(temp > 1024){
+        temp = 1024;
+      }
+      
+      channel_data[4] = temp;
+
+      
+    }
+    
 
     rot = (channel_data[3] - 512)/yaw_scale;
     
     dataA = map(channel_data[0], 0, 1024, 0, 255) - rot;
     dataB = map(channel_data[0], 0, 1024, 0, 255) + rot;
 
+    dataA = map(dataA, 0, 255, 170, 255);
+    dataB = map(dataB, 0, 255, 170, 255);
+
+    int upper = 16; //change to macro later
+
     //dataA += 8; //constant offset scaling
-    offset = map(dataA, 170, 255, 6, 10); //should be sort of linearly scaling
+    offset = map(dataA, 170, 255, 12, upper); //should be sort of linearly scaling. Change bounds to macros later
     dataA += offset;
 
-    dataA = constrain(dataA, 0, 255, 170 + offset + 1, 240);
-    dataB = constrain(dataB, 0, 255, 170, 230);
+
+
+
+    if(dataA > 230 + upper){
+      dataA = 230 + upper;
+    }
+    else if(dataA < (170 + offset + 1)){ //used to be "dataA < 179" for offset being 8
+      dataA = 170;
+    }
+
+
+    
+    //dataA = constrain(dataA, 170 + offset + 1, 240);
+    dataB = constrain(dataB, 170, 230);
 
     Serial.println((String)"Throttle DataA: " + dataA);
     Serial.println((String)"Throttle DataB: " + dataB);
@@ -146,8 +210,8 @@ void loop()
     Serial.println((String)"Channel Data: " + channel_data[1]); //prints the turn data
 
     //this returns it in terms of an angle from 0 to 180
-    servoValL = 180 - ( (servoValL*180)/1024 ); //used to be:  servoValL = (servoValL*180)/1024; changed to make left and right turn correctly
-    servoValR = (servoValR*180)/1024; //used to be:  servoValR = 180 - (servoValR*180)/1024; changed to make left and right turn correctly
+    servoValL = map(servoValL, 0, 1024, 120, 60); //used to be:  servoValL = (servoValL*180)/1024; changed to make left and right turn correctly
+    servoValR = map(servoValR, 0, 1024, 60, 120);//(servoValR*180)/1024; //used to be:  servoValR = 180 - (servoValR*180)/1024; changed to make left and right turn correctly
 
     servoValL += turn;
     servoValR += turn;
@@ -169,8 +233,8 @@ void loop()
 //    }
 
     //newly added map functions
-    servoValL = map(servoValL, 0, 180, 60, 120); 
-    servoValR = map(servoValL, 0, 180, 60, 120);
+//    servoValL = map(servoValL, 0, 180, 60, 120); 
+//    servoValR = map(servoValL, 0, 180, 60, 120);
     
     Serial.println((String)"Servo Data L: " + servoValL);
     Serial.println((String)"Servo Data R: " + servoValR);

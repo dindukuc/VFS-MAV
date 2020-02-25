@@ -7,6 +7,8 @@
 #include <PID_v1.h>
 
 #define CHANNELS 4
+#define MAX_POWER 245
+#define MAX_FREQ 58.4 //in kHz
 
 int num_channels = CHANNELS;
 int pins[CHANNELS] = {0, 1, 14, 15};  // Check what pin to use
@@ -31,7 +33,8 @@ double kp=1, ki=0.05, kd=0.25; //tuning values to change here
 PID PIDA(&InputA, &OutputA, &SetpointA, kp, ki, kd, DIRECT); //left pid loop
 PID PIDB(&InputB, &OutputB, &SetpointB, kp, ki, kd, DIRECT); //right pid loop
 
-
+int encodePinA = 23;
+int encodePinB = 22;
 
 
 
@@ -79,6 +82,10 @@ void setup(){
   
   PIDA.SetMode(AUTOMATIC);
   PIDB.SetMode(AUTOMATIC);
+
+
+
+//  maybe add interrupt stuff here to read encoders
 }
 
  
@@ -138,40 +145,31 @@ void loop()
 
     rot = (channel_data[3] - 512)/yaw_scale;
     
-    dataA = channel_data[0]/12 + 170;
-    dataB = channel_data[0]/12 + 170;
-
-    dataA -= rot; 
-    dataB += rot;
-
-    //dataA += 8; //constant offset scaling
-//    offset = map(dataA, 170, 255, 6, 10); //should be sort of linearly scaling
-//    dataA += offset;
+    SetpointA = map(channel_data[0], 0, 1024, 0, 255) - rot;
+    SetpointB = map(channel_data[0], 0, 1024, 0, 255) + rot;
+   
+    InputA = encoderVal(encodePinA);
+    InputB = encoderVal(encodePinB);
+    PIDA.Compute();
+    PIDB.Compute();
     
-    if(dataA > 238){
-      dataA = 238;
-    }
-    else if(dataA < (170)){ //used to be "dataA < 179" for offset being 8
-      dataA = 170;
-    }
+    dataA = map(OutputA, 0, 255, 170, 255);
+    dataB = map(OutputB, 0, 255, 170, 255);
 
+    dataA = constrain(dataA, 170, MAX_POWER);
+    dataB = constrain(dataB, 170, MAX_POWER);
     
-    if(dataB > 230){
-      dataB = 230;
-    }
-    else if(dataB < 170){
-      dataB = 170;
-    }
 
+    Serial.println((String)"SetpointA: " + SetpointA);
+    Serial.println((String)"SetpointB: " + SetpointB);
 
-//    setpointA = translate(dataA);
-//    setpointB = translate(dataB);
-
- 
+    Serial.println((String)"InputA: " + InputA);
+    Serial.println((String)"InputB: " + InputB);
     
     Serial.println((String)"Throttle DataA: " + dataA);
     Serial.println((String)"Throttle DataB: " + dataB);
 
+    
     analogWrite(escA,dataA);
     analogWrite(escB,dataB);
 
@@ -193,22 +191,6 @@ void loop()
 
     servoValL += turn;
     servoValR += turn;
-
-    //limits without map function
-//    if(servoValL < 60){ //max for backward
-//      servoValL = 60;
-//    }
-//    else if(servoValL > 120){ //max for forward
-//      servoValL = 120;
-//    }
-//
-//    
-//    if(servoValR < 60){ //max for forward
-//      servoValR = 60;
-//    }
-//    else if(servoValR > 120){ //max for backward
-//      servoValR = 120;
-//    }
 
     //newly added map functions
     servoValL = map(servoValL, 0, 180, 60, 120); 
@@ -244,4 +226,20 @@ void bootThrottle(){
     throttle_step--;
     delay(10);
   }
+}
+
+
+double encoderVal(int pin){
+  double duration = pulseIn(pin, LOW, 3);
+  double freq = 0;
+  double power = 0;
+  
+  if(duration != 0){
+    freq = 1/(duration + 2);
+  }
+  
+  power = 255*(freq/MAX_FREQ);
+
+  return power;
+  
 }
