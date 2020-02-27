@@ -49,9 +49,8 @@ void setup(){
   pinMode(escA, OUTPUT);
   pinMode(escB, OUTPUT);
   analogWriteFrequency(escA, 16000);     //set pin 0 frequency to 16kHz
-  analogWriteFrequency(escB, 16000);     //set pin 1 frequency to 16kHz
-  
-  
+  analogWriteFrequency(escB, 16000);     //set pin 1 frequency to 16kHz  
+  /*
   while(channel != 1024){
       
       analogWrite(escA,170);
@@ -71,7 +70,7 @@ void setup(){
 
       
     }
-  
+  */
   
   delay(1000);
   
@@ -142,6 +141,7 @@ void loop()
     }
 //    Serial.println();
 
+/*
     while(channel_data[4] != 1024){
       
       analogWrite(escA,170);
@@ -160,7 +160,7 @@ void loop()
       channel_data[4] = temp;
 
       
-    }
+    }*/
     
 
     rot = (channel_data[3] - 512)/yaw_scale;
