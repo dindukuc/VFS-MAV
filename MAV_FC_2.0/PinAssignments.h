@@ -1,5 +1,5 @@
 
-#define ESCA_PIN
+#define ESCA_PIN 2
 #define ESCB_PIN
 #define SERVOA_PIN
 #define SERVOB_PIN

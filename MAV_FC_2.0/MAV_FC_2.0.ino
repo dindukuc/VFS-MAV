@@ -61,7 +61,7 @@ void updateThrottle(){
   int upper = 16; //change to macro later
 
   //throttleA += 8; //constant offset scaling
-  offset = map(throttleA, 170, 255, 12, upper); //should be sort of linearly scaling. Change bounds to macros later
+  offset = map(throttleA, 550, 1000, 0, upper); //should be sort of linearly scaling. Change bounds to macros later
   throttleA += offset;
 
   Serial.println((String)"Throttle throttleA: " + throttleA);

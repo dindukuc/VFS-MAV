@@ -5,9 +5,9 @@
 
 const int num_channels = USED_CHANNELS;
 int channel_data[num_channels];
-int pins[num_channels] = {0, 1, 14, 15};  // Check what pin to use
-byte escA = 2; // change this
-byte escB = 3; //change this
+int pins[num_channels] = {15, 14, 9, 10};    // Check what pin to use
+byte escA = ESCA_PIN;                              // change this
+byte escB = 3;                              //change this
 byte servoA = 4;
 byte servoB = 5;
 int throttle = 55;
