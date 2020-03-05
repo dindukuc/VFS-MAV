@@ -45,7 +45,7 @@ void controlRXRead(){
         temp = 1024;
       }
       channel_data[i-1] = temp;
-//    Serial.print(channel_data[i-1]);
+      //Serial.println((String)"Channel " + (i-1) + (String)": " + channel_data[i-1]);
     }
 }
 
@@ -55,17 +55,14 @@ void updateThrottle(){
 
   rot = (channel_data[3] - 512)/yaw_scale;
 
-  throttleA = map(channel_data[0], 0, 1024, 550, 1000) - rot;
-  throttleB = map(channel_data[0], 0, 1024, 550, 1000) + rot;
+  throttleA = map(channel_data[0], 0, 1024, min_throttle, max_throttle) + rot;
+  throttleB = map(channel_data[0], 0, 1024, min_throttle, max_throttle) - rot;
 
-  int upper = 16; //change to macro later
-
-  //throttleA += 8; //constant offset scaling
-  offset = map(throttleA, 550, 1000, 0, upper); //should be sort of linearly scaling. Change bounds to macros later
+  offset = map(throttleA, 550, 1000, 0, max_offset); //should be sort of linearly scaling. Change bounds to macros later
   throttleA += offset;
 
-  Serial.println((String)"Throttle throttleA: " + throttleA);
-  Serial.println((String)"Throttle throttleB: " + throttleB);
+  //Serial.println((String)"Throttle throttleA: " + throttleA);
+  //Serial.println((String)"Throttle throttleB: " + throttleB);
 
   //data = 170;
   analogWrite(escA,throttleA);
@@ -83,17 +80,17 @@ void updateServos(){
   servoValL = channel_data[2]; //forward and back channel
   servoValR = channel_data[2]; //forward and back channel
 
-  Serial.println((String)"Channel Data: " + channel_data[1]); //prints the turn data
+  //Serial.println((String)"Channel Data: " + channel_data[1]); //prints the turn data
 
   //this returns it in terms of an angle from 0 to 180
   servoValL = map(servoValL, 0, 1024, 120, 60); //used to be:  servoValL = (servoValL*180)/1024; changed to make left and right turn correctly
   servoValR = map(servoValR, 0, 1024, 60, 120);//(servoValR*180)/1024; //used to be:  servoValR = 180 - (servoValR*180)/1024; changed to make left and right turn correctly
 
-  servoValL += turn;
-  servoValR += turn;
+  servoValL -= turn;
+  servoValR -= turn;
 
-  Serial.println((String)"Servo Data L: " + servoValL);
-  Serial.println((String)"Servo Data R: " + servoValR);
+  //Serial.println((String)"Servo Data L: " + servoValL);
+  //Serial.println((String)"Servo Data R: " + servoValR);
 
   servoL.write(servoValL);
   servoR.write(servoValR);
@@ -104,6 +101,7 @@ void setup(){
   int temp = 0;
   int duration = 0;
   int channel = 0;
+  pinMode(13, OUTPUT);
   Serial.begin(9600);
 
   initControlRX();
@@ -122,6 +120,22 @@ void loop()
   
   while(1){
   controlRXRead();    //store input from remote tx in channel_data[] array
+
+  while(channel_data[4] < 512){
+    Serial.println("MAV IS DEAD");
+    servoL.write(90);
+    servoR.write(90);
+    analogWrite(escA,min_throttle);
+    analogWrite(escB,min_throttle);
+    controlRXRead();
+    debugLEDstate ^= 1;
+    digitalWrite(13, debugLEDstate);
+    delay(100);
+  }
+  if(debugLEDstate == 1){
+    debugLEDstate = 0;
+    digitalWrite(13, debugLEDstate);
+  }
 
   updateThrottle();   //update esc duty cycle based on left control stick
     
