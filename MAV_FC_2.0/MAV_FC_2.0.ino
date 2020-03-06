@@ -54,12 +54,15 @@ void updateThrottle(){
   
 
   rot = (channel_data[3] - 512)/yaw_scale;
+  //Serial.println((String)"Rotation Value " + rot);
 
   throttleA = map(channel_data[0], 0, 1024, min_throttle, max_throttle) + rot;
   throttleB = map(channel_data[0], 0, 1024, min_throttle, max_throttle) - rot;
 
-  offset = map(throttleA, 550, 1000, 0, max_offset); //should be sort of linearly scaling. Change bounds to macros later
-  throttleA += offset;
+  offset = map(throttleB, 550, 1000, 0, max_offset); //should be sort of linearly scaling. Change bounds to macros later
+  throttleB += offset;
+  //Serial.println((String)"Offset Value " + offset);
+
 
   //Serial.println((String)"Throttle throttleA: " + throttleA);
   //Serial.println((String)"Throttle throttleB: " + throttleB);
@@ -83,8 +86,8 @@ void updateServos(){
   //Serial.println((String)"Channel Data: " + channel_data[1]); //prints the turn data
 
   //this returns it in terms of an angle from 0 to 180
-  servoValL = map(servoValL, 0, 1024, 120, 60); //used to be:  servoValL = (servoValL*180)/1024; changed to make left and right turn correctly
-  servoValR = map(servoValR, 0, 1024, 60, 120);//(servoValR*180)/1024; //used to be:  servoValR = 180 - (servoValR*180)/1024; changed to make left and right turn correctly
+  servoValL = map(servoValL, 0, 1024, max_servo_val, min_servo_val); //used to be:  servoValL = (servoValL*180)/1024; changed to make left and right turn correctly
+  servoValR = map(servoValR, 0, 1024, min_servo_val, max_servo_val);//(servoValR*180)/1024; //used to be:  servoValR = 180 - (servoValR*180)/1024; changed to make left and right turn correctly
 
   servoValL -= turn;
   servoValR -= turn;
@@ -125,8 +128,8 @@ void loop()
     Serial.println("MAV IS DEAD");
     servoL.write(90);
     servoR.write(90);
-    analogWrite(escA,min_throttle);
-    analogWrite(escB,min_throttle);
+    analogWrite(escA, min_throttle);
+    analogWrite(escB, min_throttle);
     controlRXRead();
     debugLEDstate ^= 1;
     digitalWrite(13, debugLEDstate);

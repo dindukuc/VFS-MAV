@@ -16,11 +16,13 @@ int throttleA = 0;
 int throttleB = 0;
 int rot = 0;
 int yaw_scale = 64; //128;
-byte max_offset = 8;
-byte min_throttle = 550;
-byte max_throttle = 1000;
+byte max_offset = 2;
+int min_throttle = 550;
+int max_throttle = 1000;
 byte debugLEDstate = 0;
 
 //servo stuff
 Servo servoL;
 Servo servoR;
+int max_servo_val = 120;
+int min_servo_val = 60;
