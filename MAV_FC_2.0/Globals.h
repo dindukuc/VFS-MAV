@@ -24,5 +24,6 @@ byte debugLEDstate = 0;
 //servo stuff
 Servo servoL;
 Servo servoR;
-int max_servo_val = 120;
-int min_servo_val = 60;
+int max_servo_val = 105;
+int min_servo_val = 75;
+int turn_scale = 64;

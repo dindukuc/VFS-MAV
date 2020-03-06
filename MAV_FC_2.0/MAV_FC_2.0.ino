@@ -76,24 +76,25 @@ void updateServos(){
   int servoValL;
   int servoValR;
   int turn;
-  int turn_scale = 16;
+  
 
   turn = (channel_data[1] - 512)/turn_scale;
 
   servoValL = channel_data[2]; //forward and back channel
   servoValR = channel_data[2]; //forward and back channel
 
-  //Serial.println((String)"Channel Data: " + channel_data[1]); //prints the turn data
-
+  Serial.println((String)"Channel Data: " + channel_data[1]); //prints the turn data
+  Serial.println((String)"Turn value: " + turn); //prints the turn data
+  
   //this returns it in terms of an angle from 0 to 180
   servoValL = map(servoValL, 0, 1024, max_servo_val, min_servo_val); //used to be:  servoValL = (servoValL*180)/1024; changed to make left and right turn correctly
-  servoValR = map(servoValR, 0, 1024, min_servo_val, max_servo_val);//(servoValR*180)/1024; //used to be:  servoValR = 180 - (servoValR*180)/1024; changed to make left and right turn correctly
+  servoValR = map(servoValR, 0, 1024, max_servo_val, min_servo_val);//(servoValR*180)/1024; //used to be:  servoValR = 180 - (servoValR*180)/1024; changed to make left and right turn correctly
 
-  servoValL -= turn;
+  servoValL += turn;
   servoValR -= turn;
 
-  //Serial.println((String)"Servo Data L: " + servoValL);
-  //Serial.println((String)"Servo Data R: " + servoValR);
+  Serial.println((String)"Servo Data L: " + servoValL);
+  Serial.println((String)"Servo Data R: " + servoValR);
 
   servoL.write(servoValL);
   servoR.write(servoValR);
