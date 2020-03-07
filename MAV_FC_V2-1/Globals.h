@@ -34,9 +34,9 @@ const int max_throttle = 1000;
 //Servo variables
 Servo servoL;
 Servo servoR;
-const int max_servo_val = 105;
-const int min_servo_val = 75;
-const int turn_scale = 64;
+const int max_servo_val = 120;
+const int min_servo_val = 60;
+const int turn_scale = 16;
 int servoValL = 0;
 int servoValR = 0;
 
@@ -72,7 +72,7 @@ PID stable_roll(&input_roll, &output_roll, &setpoint_roll, kp_roll, ki_roll, kd_
 */
 
 /* Set the delay between fresh samples */
-#define BNO055_SAMPLERATE_DELAY_MS (50)
+#define DELAY (50)
 
 // Check I2C device address and correct line below (by default address is 0x29 or 0x28)
 //                                   id, address

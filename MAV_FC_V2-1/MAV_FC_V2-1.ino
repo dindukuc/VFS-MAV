@@ -21,7 +21,7 @@
 #include <PID_v1.h>
 #include <Servo.h>
 
-#define DEBUG 0                 //change to 1 to print debug information
+#define DEBUG                   //comment to 1 to not print debug information
 
 #include "Globals.h"            //defines all variables
 #include "Initialization.h"     //defines initialization routines
@@ -61,6 +61,6 @@ void loop()
 
   updateStabilization();        //update servo positions based on IMU PID loop on pitch and roll and right control stick
 
-  //delay(50);                  //teensy2fast
+  delay(DELAY);
   }
 }

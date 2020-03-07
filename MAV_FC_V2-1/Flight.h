@@ -61,9 +61,9 @@ void updateServos(){
 
   //this returns it in terms of an angle from 0 to 180
   servoValL = map(servoValL, 0, 1024, max_servo_val, min_servo_val); //used to be:  servoValL = (servoValL*180)/1024; changed to make left and right turn correctly
-  servoValR = map(servoValR, 0, 1024, max_servo_val, min_servo_val);//(servoValR*180)/1024; //used to be:  servoValR = 180 - (servoValR*180)/1024; changed to make left and right turn correctly
+  servoValR = map(servoValR, 0, 1024, min_servo_val, max_servo_val);//(servoValR*180)/1024; //used to be:  servoValR = 180 - (servoValR*180)/1024; changed to make left and right turn correctly
 
-  servoValL += turn;
+  servoValL -= turn;
   servoValR -= turn;
 
   #ifdef DEBUG

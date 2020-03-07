@@ -142,6 +142,4 @@ void updateStabilization(){
     Serial.println((String)"Servo Data L: " + servoValL);
     Serial.println((String)"Servo Data R: " + servoValR);
     #endif
-
-  delay(BNO055_SAMPLERATE_DELAY_MS);
 }
