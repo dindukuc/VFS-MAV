@@ -7,8 +7,14 @@
 
 #include "PinAssignments.h"
 #define SERVO_ZERO 90
-#define OFFSET_PITCH .11
+//#define OFFSET_PITCH .11
 #define ALPHA .75
+
+//hard imu claibration stuff
+float init_pitch = -2555;
+float init_roll = -2555; 
+
+
 
 //Hardware connections
 const int num_channels = USED_CHANNELS;
@@ -34,8 +40,10 @@ const int max_throttle = 1000;
 //Servo variables
 Servo servoL;
 Servo servoR;
-const int max_servo_val = 120;
-const int min_servo_val = 60;
+const int max_servo_val = 100;
+const int min_servo_val = 80;
+const int min_turn = -10;
+const int max_turn = 10;
 const int turn_scale = 16;
 int servoValL = 0;
 int servoValR = 0;
@@ -43,10 +51,10 @@ int servoValR = 0;
 //Pitch and roll variables
 double prev_roll = -255;
 double prev_pitch = -255;
-const int max_pitch = 10;
-const int min_pitch = -10;
-const int max_roll = 10;
-const int min_roll = -10;
+const int max_pitch = 90;
+const int min_pitch = -90;
+const int max_roll = 180;
+const int min_roll = -180;
 
 //PID variables and objects
 double setpoint_pitch, input_pitch, output_pitch;

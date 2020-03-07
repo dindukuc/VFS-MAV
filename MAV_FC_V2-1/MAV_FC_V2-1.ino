@@ -21,7 +21,7 @@
 #include <PID_v1.h>
 #include <Servo.h>
 
-#define DEBUG                   //comment to 1 to not print debug information
+#define DEBUG                   //comment to not print debug information
 
 #include "Globals.h"            //defines all variables
 #include "Initialization.h"     //defines initialization routines
@@ -35,7 +35,11 @@ void setup(){
   Serial.begin(115200);
 
   initIMU();
-
+  delay(600);
+  imu::Vector<3> grav = bno.getVector(Adafruit_BNO055::VECTOR_GRAVITY); 
+  set_init_vals(grav.x(), grav.y(), grav.z());
+  
+  
   initControlRX();
   
   initServos();

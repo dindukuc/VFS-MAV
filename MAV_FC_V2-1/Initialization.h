@@ -61,11 +61,13 @@ void initIMU(){
 
   //stable_pitch.SetSampleTime(40);
 
-  stable_pitch.SetOutputLimits(-90, 90);
+  
+
+  stable_pitch.SetOutputLimits(min_pitch, max_pitch);
   stable_pitch.SetSampleTime(50);
   stable_pitch.SetMode(AUTOMATIC);
 
-  stable_roll.SetOutputLimits(-180, 180);
+  stable_roll.SetOutputLimits(min_roll, max_roll);
   stable_roll.SetSampleTime(50);
   stable_roll.SetMode(AUTOMATIC);
 
