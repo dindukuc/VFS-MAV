@@ -49,7 +49,7 @@ void updateServos(){
   int turn;
   
 
-  turn = (channel_data[1] - 512)/turn_scale;
+  turn = map(channel_data[1], 0, 1024, min_turn, max_turn);//(channel_data[1] - 512)/turn_scale;
 
   servoValL = channel_data[2]; //forward and back channel
   servoValR = channel_data[2]; //forward and back channel
@@ -121,6 +121,7 @@ void updateServos_v2(){
 
 void killSwitchLoop(){
   while(channel_data[4] < 512){
+//  int servo = 90;
   #ifdef DEBUG
     Serial.println("MAV IS DEAD");
   #endif
@@ -138,4 +139,3 @@ void killSwitchLoop(){
     digitalWrite(13, debugLEDstate);
   }
 }
-

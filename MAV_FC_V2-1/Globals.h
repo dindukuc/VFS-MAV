@@ -32,7 +32,7 @@ int throttle_step = 0;
 int throttleA = 0;
 int throttleB = 0;
 int rot = 0;
-const int yaw_scale = 64; //128;
+const int yaw_scale = 32; //128;
 const byte max_offset = 2;
 const int min_throttle = 550;
 const int max_throttle = 1000;
@@ -40,10 +40,10 @@ const int max_throttle = 1000;
 //Servo variables
 Servo servoL;
 Servo servoR;
-const int max_servo_val = 100;
-const int min_servo_val = 80;
-const int min_turn = -10;
-const int max_turn = 10;
+const int max_servo_val = 105;
+const int min_servo_val = 75;
+const int min_turn = -15;
+const int max_turn = 15;
 const int turn_scale = 16;
 int servoValL = 0;
 int servoValR = 0;
@@ -51,10 +51,10 @@ int servoValR = 0;
 //Pitch and roll variables
 double prev_roll = -255;
 double prev_pitch = -255;
-const int max_pitch = 90;
-const int min_pitch = -90;
-const int max_roll = 180;
-const int min_roll = -180;
+const int max_pitch = 20;
+const int min_pitch = -20;
+const int max_roll = 40;
+const int min_roll = -40;
 
 //PID variables and objects
 double setpoint_pitch, input_pitch, output_pitch;
@@ -64,7 +64,7 @@ PID stable_pitch(&input_pitch, &output_pitch, &setpoint_pitch, kp_pitch, ki_pitc
 
 
 double setpoint_roll, input_roll, output_roll;
-double kp_roll=8, ki_roll=0.1, kd_roll=0.25; //tuning values to change here
+double kp_roll=2, ki_roll=0.1, kd_roll=0.25; //tuning values to change here
 
 PID stable_roll(&input_roll, &output_roll, &setpoint_roll, kp_roll, ki_roll, kd_roll, DIRECT); //roll pid loop
 
@@ -80,7 +80,7 @@ PID stable_roll(&input_roll, &output_roll, &setpoint_roll, kp_roll, ki_roll, kd_
 */
 
 /* Set the delay between fresh samples */
-#define DELAY (50)
+#define DELAY (10)
 
 // Check I2C device address and correct line below (by default address is 0x29 or 0x28)
 //                                   id, address

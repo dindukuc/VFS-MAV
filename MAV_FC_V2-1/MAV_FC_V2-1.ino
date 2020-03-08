@@ -20,8 +20,9 @@
 #include <math.h>
 #include <PID_v1.h>
 #include <Servo.h>
+#include <EEPROM.h>
 
-#define DEBUG                   //comment to not print debug information
+//#define DEBUG                   //comment to not print debug information
 
 #include "Globals.h"            //defines all variables
 #include "Initialization.h"     //defines initialization routines
@@ -36,8 +37,8 @@ void setup(){
 
   initIMU();
   delay(600);
-  imu::Vector<3> grav = bno.getVector(Adafruit_BNO055::VECTOR_GRAVITY); 
-  set_init_vals(grav.x(), grav.y(), grav.z());
+//  imu::Vector<3> grav = bno.getVector(Adafruit_BNO055::VECTOR_GRAVITY); 
+//  set_init_vals(grav.x(), grav.y(), grav.z());
   
   
   initControlRX();
@@ -61,9 +62,9 @@ void loop()
 
   updateThrottle();             //update esc duty cycle based on left control stick
     
-  //updateServos();             //update servo positions based on right control stick
+  updateServos();             //update servo positions based on right control stick
 
-  updateStabilization();        //update servo positions based on IMU PID loop on pitch and roll and right control stick
+//  updateStabilization();        //update servo positions based on IMU PID loop on pitch and roll and right control stick
 
   delay(DELAY);
   }

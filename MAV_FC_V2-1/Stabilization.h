@@ -55,7 +55,7 @@ void write_pitch(double pitch){
 }
 
 double zero_pitch(double val){
-  val -= init_pitch;
+//  val -= init_pitch;
 
   if((val > -.02) && (val < .02)){
     val = 0;
@@ -65,7 +65,7 @@ double zero_pitch(double val){
 }
 
 double zero_roll(double val){
-  val -= init_roll;
+//  val -= init_roll;
 
   if((val > -.02) && (val < .02)){
     val = 0;
