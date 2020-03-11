@@ -33,7 +33,7 @@ int throttleA = 0;
 int throttleB = 0;
 int rot = 0;
 const int yaw_scale = 32; //128;
-const byte max_offset = 2;
+const byte max_offset = 4;
 const int min_throttle = 550;
 const int max_throttle = 1000;
 
