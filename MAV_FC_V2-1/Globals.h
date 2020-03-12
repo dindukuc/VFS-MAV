@@ -9,6 +9,8 @@
 #define SERVO_ZERO 90
 //#define OFFSET_PITCH .11
 #define ALPHA .75
+#define CPR 250
+#define MAGNITUDE 1000000;
 
 //hard imu claibration stuff
 float init_pitch = -2555;
@@ -85,3 +87,14 @@ PID stable_roll(&input_roll, &output_roll, &setpoint_roll, kp_roll, ki_roll, kd_
 // Check I2C device address and correct line below (by default address is 0x29 or 0x28)
 //                                   id, address
 Adafruit_BNO055 bno = Adafruit_BNO055(-1, 0x28);
+
+double interval_time_us = 1000000;
+double encA_count = 0;
+double encB_count = 0;
+double current_rpmA = 0;
+double current_rpmB = 0;
+
+byte encA_pin = 23;
+byte encB_pin = 22;
+
+IntervalTimer rpmTimer;
