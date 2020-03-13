@@ -33,6 +33,11 @@ void updateThrottle(){
   throttleB += 0;//offset;
   //Serial.println((String)"Offset Value " + offset);
 
+  Serial.print(throttleA + (String)",");
+  Serial.print(current_rpmA);
+  Serial.print(",");
+  Serial.println(current_rpmB);
+  
   #ifdef DEBUG
   Serial.println((String)"Throttle throttleA: " + throttleA);
   Serial.println((String)"Throttle throttleB: " + throttleB);
