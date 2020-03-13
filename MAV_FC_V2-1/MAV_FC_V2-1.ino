@@ -28,6 +28,7 @@
 #include "Initialization.h"     //defines initialization routines
 #include "Flight.h"             //defines core flight functions
 #include "Stabilization.h"      //defines auto stabilization functions
+#include "Tachometer.h"         //rpm measurement functions
 
 void setup(){
   // int temp = 0;
